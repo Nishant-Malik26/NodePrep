@@ -1,37 +1,40 @@
-const express = require("express");
-const Profile = require("../../models/Profile");
-const auth = require("../../middleware/auth");
-const { check, validationResult } = require("express-validator");
+const express = require('express');
+const Profile = require('../../models/Profile');
+const auth = require('../../middleware/auth');
+const request = require('request');
+
+const { check, validationResult } = require('express-validator');
+const config = require('config');
 
 const router = express.Router();
 
-router.get("/me", auth, async (req, res) => {
+router.get('/me', auth, async (req, res) => {
   try {
-    const profile = await Profile.find({ user: req.user.id }).populate("user", [
-      "avatar",
-      "name",
-    ]);
+    const profile = await Profile.findOne({ user: req.user.id }).populate(
+      'user',
+      ['avatar', 'name']
+    );
 
     if (!profile) {
-      res.status(400).send({ msg: "profile not found" });
+      return res.status(400).send({ msg: 'profile not found' });
     }
     res.status(200).json({ profile });
   } catch (error) {
-    res.status(500).send("Internal Server Error");
+    console.log('🚀 ~ router.get ~ error:', error);
+    res.status(500).send('Internal Server Error');
   }
 });
 
 router.post(
-  "/",
+  '/',
   [
     auth,
     [
-      check("status", "Status is mandatory").not().isEmpty(),
-      check("skills", "Skills is mandatory").not().isEmpty(),
+      check('status', 'Status is mandatory').not().isEmpty(),
+      check('skills', 'Skills is mandatory').not().isEmpty(),
     ],
   ],
   async (req, res) => {
-    console.log("🚀 ~ req:", req);
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
@@ -47,8 +50,8 @@ router.post(
     if (req.body.status) profileFields.status = req.body.status;
     if (req.body.githubusername)
       profileFields.githubusername = req.body.githubusername;
-    if (typeof req.body.skills !== "undefined") {
-      profileFields.skills = req.body.skills.split(",");
+    if (typeof req.body.skills !== 'undefined') {
+      profileFields.skills = req.body.skills.split(',');
     }
 
     profileFields.social = {};
@@ -61,7 +64,7 @@ router.post(
     try {
       const profile = await Profile.findOne({ user: req.user.id });
       if (profile) {
-        console.log("🚀 ~ profile:", profile);
+        console.log('🚀 ~ profile:', profile);
         // return res.status(400).json({ msg: "Profile Already Present" });
         const updatedProfile = await Profile.findOneAndUpdate(
           { user: req.user.id },
@@ -72,28 +75,141 @@ router.post(
       }
 
       const newProfile = new Profile(profileFields);
-      console.log("🚀 ~ newProfile:", newProfile);
+      console.log('🚀 ~ newProfile:', newProfile);
       const isSavedSuccesfully = await newProfile.save();
-      console.log("🚀 ~ isSavedSuccesfully:", isSavedSuccesfully);
+      console.log('🚀 ~ isSavedSuccesfully:', isSavedSuccesfully);
       if (isSavedSuccesfully) {
         return res.status(200).json(newProfile);
       }
     } catch (error) {
-      console.log("🚀 ~ error:", error);
-      res.status(500).send("Internal Server Error");
+      console.log('🚀 ~ error:', error);
+      res.status(500).send('Internal Server Error');
     }
   }
 );
 
-router.get("/", (req, res) => {
-    try {
+router.get('/', async (req, res) => {
+  try {
+    const profiles = await Profile.find().populate('user', ['name', 'avatar']);
+    return res.status(200).json(profiles);
+  } catch (error) {
+    res.status(500).send('Internal Server Error');
+  }
+});
 
+router.get('/user/:user_id', async (req, res) => {
+  try {
+    const profile = await Profile.findOne({
+      user: req.params.user_id,
+    }).populate('user', ['name', 'avatar']);
 
-        
-    } catch (error) {
-      res.status(500).send("Internal Server Error");
-        
+    if (!profile) {
+      return res.status(400).send({ msg: 'profile not found' });
     }
+    return res.status(200).json(profile);
+  } catch (error) {
+    console.log('🚀 ~ router.get ~ error:', error);
+    res.status(500).send('Internal Server Error');
+  }
+});
+
+router.delete('/', auth, async (req, res) => {
+  try {
+    await Profile.findOneAndDelete({ user: req.user.id });
+    await User.findOneAndDelete({ _id: req.user.id });
+    res.status(200).json('Deleted Succesfully');
+  } catch (error) {
+    res.status(500).send('Internal Server Error');
+  }
+});
+
+router.post('/experience', auth, (req, res) => {
+  Profile.findOne({ user: req.user.id }).then((profile) => {
+    const newExp = {
+      title: req.body.title,
+      company: req.body.company,
+      location: req.body.location,
+      from: req.body.from,
+      to: req.body.to,
+      current: req.body.current,
+      description: req.body.description,
+    };
+
+    profile.experience.unshift(newExp);
+
+    profile.save().then((profile) => res.json(profile));
+  });
+});
+
+router.delete('/experience/:exp_id', auth, (req, res) => {
+  Profile.findOne({ user: req.user.id })
+    .then((profile) => {
+      const removeIndex = profile.experience
+        .map((item) => item.id)
+        .indexOf(req.params.exp_id);
+
+      profile.experience.splice(removeIndex, 1);
+      profile.save().then((profile) => res.json(profile));
+    })
+    .catch((err) => res.status(404).json(err));
+});
+
+router.post('/education', auth, (req, res) => {
+  Profile.findOne({ user: req.user.id }).then((profile) => {
+    const newEdu = {
+      school: req.body.school,
+      degree: req.body.degree,
+      fieldofstudy: req.body.fieldofstudy,
+      from: req.body.from,
+      to: req.body.to,
+      current: req.body.current,
+      description: req.body.description,
+    };
+
+    profile.education.unshift(newEdu);
+
+    profile.save().then((profile) => res.json(profile));
+  });
+});
+
+router.delete('/education/:edu_id', auth, (req, res) => {
+  Profile.findOne({ user: req.user.id })
+    .then((profile) => {
+      const removeIndex = profile.education
+        .map((item) => item.id)
+        .indexOf(req.params.edu_id);
+
+      profile.education.splice(removeIndex, 1);
+
+      profile.save().then((profile) => res.json(profile));
+    })
+    .catch((err) => res.status(404).json(err));
+});
+
+router.get('/github/:username', (req, res) => {
+  try {
+    const option = {
+      uri: `https://api.github.com/users/${
+        req.params.username
+      }/repos?per_page=5&sort=created:asc&client_id=${config.get(
+        'gitClientId'
+      )}&client_secret=${config.get('gitSecterId')}`,
+      method: 'GET',
+      headers: { 'user-agent': 'node.js' },
+    };
+    request(option, (err, response, body) => {
+      console.log('🚀 ~ request ~ option:', option);
+      console.log('🚀 ~ request ~ response:', response);
+      if (err) console.error(err);
+      if (response.statusCode !== 200) {
+        res.status(400).json('Profile Not Found');
+      }
+      res.json(JSON.parse(body));
+    });
+  } catch (error) {
+    console.log('🚀 ~ router.get ~ error:', error);
+    res.status(500).json(error);
+  }
 });
 
 module.exports = router;
