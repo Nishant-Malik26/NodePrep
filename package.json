@@ -4,20 +4,31 @@
   "description": "Node prepration",
   "main": "server.js",
   "scripts": {
-    "start" : "node server",
-    "server" : "nodemon server"
+    "start": "node server",
+    "server": "nodemon server",
+    "client": "npm start --prefix client",
+    "dev": "concurrently \"npm run server\" \"npm run client\""
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@reduxjs/toolkit": "^2.2.1",
+    "axios": "^1.6.7",
     "bcryptjs": "^2.4.3",
     "config": "^3.3.10",
+    "dayjs": "^1.11.10",
     "express": "^4.18.2",
     "express-validator": "^7.0.1",
     "gravatar": "^1.8.2",
     "jsonwebtoken": "^9.0.2",
+    "moment": "^2.30.1",
     "mongoose": "^8.1.1",
-    "request": "^2.88.2"
+    "react-moment": "^1.1.3",
+    "react-router-dom": "^6.22.0",
+    "redux": "^4.2.1",
+    "redux-devtools-extension": "^2.13.9",
+    "request": "^2.88.2",
+    "uuid": "^9.0.1"
   },
   "devDependencies": {
     "concurrently": "^8.2.2",
