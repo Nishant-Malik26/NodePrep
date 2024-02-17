@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
-import { useDispatch } from 'react-redux';
-import { Link } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { Link, useNavigate } from 'react-router-dom';
 import { v4 as uuid } from 'uuid';
 import { setAlertWithRemove } from '../../reducers/removeAlert';
+import { register } from '../../reducers/register';
 const Register = () => {
   const dispatch = useDispatch();
-
+  const navigate = useNavigate();
+  const isAuthenticated = useSelector((state) => state.Auth.isAuthenticated);
   const [formData, setFormData] = useState({});
   const { name, email, password, password1 } = formData;
   const handleInputChange = (e) => {
@@ -23,9 +25,14 @@ const Register = () => {
           alertType: 'danger',
         })
       );
+    } else {
+      dispatch(register({ name, email, password }));
     }
-    console.log(formData);
   };
+
+  if (isAuthenticated) {
+    navigate('/dashboard');
+  }
   return (
     <>
       <h1 className='large text-primary'>Sign Up</h1>

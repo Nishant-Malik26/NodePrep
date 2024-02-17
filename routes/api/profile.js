@@ -9,6 +9,7 @@ const config = require('config');
 const router = express.Router();
 
 router.get('/me', auth, async (req, res) => {
+  console.log('🚀 ~ router.get ~ req.user.id:', req.user.id);
   try {
     const profile = await Profile.findOne({ user: req.user.id }).populate(
       'user',
@@ -42,14 +43,14 @@ router.post(
 
     const profileFields = {};
     profileFields.user = req.user.id;
-    if (req.body.handle) profileFields.handle = req.body.handle;
-    if (req.body.company) profileFields.company = req.body.company;
-    if (req.body.website) profileFields.website = req.body.website;
-    if (req.body.location) profileFields.location = req.body.location;
-    if (req.body.bio) profileFields.bio = req.body.bio;
-    if (req.body.status) profileFields.status = req.body.status;
-    if (req.body.githubusername)
-      profileFields.githubusername = req.body.githubusername;
+    if (req.body?.handle) profileFields.handle = req.body?.handle;
+    if (req.body?.company) profileFields.company = req.body?.company;
+    if (req.body?.website) profileFields.website = req.body?.website;
+    if (req.body?.location) profileFields.location = req.body?.location;
+    if (req.body?.bio) profileFields.bio = req.body?.bio;
+    if (req.body?.status) profileFields.status = req.body?.status;
+    if (req.body?.githubusername)
+      profileFields.githubusername = req.body?.githubusername;
     if (typeof req.body.skills !== 'undefined') {
       profileFields.skills = req.body.skills.split(',');
     }
@@ -123,7 +124,7 @@ router.delete('/', auth, async (req, res) => {
   }
 });
 
-router.post('/experience', auth, (req, res) => {
+router.put('/experience', auth, (req, res) => {
   Profile.findOne({ user: req.user.id }).then((profile) => {
     const newExp = {
       title: req.body.title,
@@ -154,7 +155,7 @@ router.delete('/experience/:exp_id', auth, (req, res) => {
     .catch((err) => res.status(404).json(err));
 });
 
-router.post('/education', auth, (req, res) => {
+router.put('/education', auth, (req, res) => {
   Profile.findOne({ user: req.user.id }).then((profile) => {
     const newEdu = {
       school: req.body.school,

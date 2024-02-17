@@ -58,10 +58,14 @@ router.get('/:id', auth, async (req, res) => {
 router.delete('/:id', auth, async (req, res) => {
   try {
     const post = await Posts.findById(req.params.id);
+    console.log('🚀 ~ router.delete ~ post:', post);
+    if (!post) {
+      return res.status(404).json({ msg: 'Post not found' });
+    }
     if (post.user.toString() !== req.user.id) {
       return res.status(401).send('User not Autherized');
     }
-    await post.remove();
+    await Posts.findOneAndDelete(req.params.id);
     res.status(200).json('Post deleted succesfully');
   } catch (error) {
     console.log('🚀 ~ error:', error);
@@ -79,7 +83,7 @@ router.put('/like/:id', auth, async (req, res) => {
     post.likes.unshift({ user: req.user.id });
 
     await post.save();
-    res.status(200).json('Post liked');
+    res.status(200).json(post.likes);
   } catch (error) {
     console.log('🚀 ~ error:', error);
     return res.status(500).send(error);
@@ -97,7 +101,7 @@ router.put('/unlike/:id', auth, async (req, res) => {
     );
     post.likes.splice(index, 1);
     await post.save();
-    res.status(200).json('Post unliked');
+    res.status(200).json(post.likes);
   } catch (error) {
     console.log('🚀 ~ error:', error);
     return res.status(500).send(error);

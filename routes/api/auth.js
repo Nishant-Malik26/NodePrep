@@ -1,30 +1,30 @@
-const express = require("express");
-const auth = require("../../middleware/auth");
-const User = require("../../models/User");
-
-const { check, validationResult } = require("express-validator");
-const bcrypt = require("bcryptjs");
-const jwttoken = require("jsonwebtoken");
-const config = require("config");
+const express = require('express');
+const auth = require('../../middleware/auth');
+const User = require('../../models/User');
+const v4 = require('uuid');
+const { check, validationResult } = require('express-validator');
+const bcrypt = require('bcryptjs');
+const jwttoken = require('jsonwebtoken');
+const config = require('config');
 const router = express.Router();
 
-router.get("/", auth, async (req, res) => {
+router.get('/', auth, async (req, res) => {
   try {
-    const user = await User.findById(req.user.id).select("-password");
+    const user = await User.findById(req.user.id).select('-password');
     if (!user) {
-      return res.status(400).json({ msg: "User Not Found" });
+      return res.status(400).json({ msg: 'User Not Found' });
     } else return res.status(200).json({ user });
   } catch (error) {
-    res.status(500).send("Internal Server Error");
+    res.status(500).send('Internal Server Error');
   }
 });
 
 router.post(
-  "/",
+  '/',
   [
     // check("name", "Name is required").not().isEmpty(),
-    check("email", "Email is not in correct format").isEmail(),
-    check("password", "Password length should be greater than 6").isLength({
+    check('email', 'Email is not in correct format').isEmail(),
+    check('password', 'Password length should be greater than 6').isLength({
       min: 6,
     }),
   ],
@@ -64,7 +64,7 @@ router.post(
 
         jwttoken.sign(
           payload,
-          config.get("secretKey"),
+          config.get('secretKey'),
           { expiresIn: 3600000 },
           (err, token) => {
             if (err) {
@@ -72,19 +72,17 @@ router.post(
             } else
               res
                 .status(200)
-                .json({ msg: "User Succesfully logged in", token });
+                .json({ msg: 'User Succesfully logged in', token });
           }
         );
+      } else {
+        res.status(500).json({ errors: [{ msg: 'Incorrect Credentials' }] });
       }
     } catch (err) {
       console.log(err);
-      res.status(500).send("Internal Server Error");
+      res.status(500).json({ errors: [{ msg: 'Incorrect Credentials' }] });
     }
   }
 );
 
 module.exports = router;
-
-
-
-

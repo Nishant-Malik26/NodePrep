@@ -1,7 +1,12 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { Link, useNavigate } from 'react-router-dom';
+import { login } from '../../reducers/register';
 
 const Login = () => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const isAuthenticated = useSelector((state) => state.Auth.isAuthenticated);
   const [formData, setFormData] = useState({});
   const { email, password } = formData;
   const handleInputChange = (e) => {
@@ -9,16 +14,22 @@ const Login = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const onSubmit = () => {
-    console.log(formData);
+  const onSubmit = (e) => {
+    e.preventDefault();
+    console.log(formData, 'formData');
+    dispatch(login({ email, password }));
   };
+
+  if (isAuthenticated) {
+    navigate('/dashboard');
+  }
   return (
     <>
       <h1 className='large text-primary'>Sign In</h1>
       <p className='lead'>
         <i className='fas fa-user'></i> Sign Into Your Account
       </p>
-      <form action={onSubmit} className='form'>
+      <form onSubmit={onSubmit} className='form'>
         <div className='form-group'>
           <input
             type='email'
@@ -39,11 +50,11 @@ const Login = () => {
             value={password}
             onChange={(e) => handleInputChange(e)}
             placeholder='Password'
-            minlength='6'
+            minLength='6'
           />
         </div>
 
-        <input type='submit' value='Register' className='btn btn-primary' />
+        <input type='submit' value='Login' className='btn btn-primary' />
       </form>
       <p className='my-1'>
         Don't have an account? <Link href='/register'>Sign Up</Link>
