@@ -10,7 +10,7 @@ const PostItem = (props) => {
     showActions,
     post: { _id, text, name, avatar, user, likes, comments, date },
   } = props;
-  console.log('🚀 ~ PostItem ~ likes:', likes);
+  console.log('🚀 ~ PostItem ~ likes:', likes, _id);
   const dispatch = useDispatch();
   const AuthData = useSelector((state) => state.Auth);
   console.log('🚀 ~ PostItem ~ AuthData:', AuthData);

@@ -10,6 +10,7 @@ import Education from './Education';
 const Dashboard = () => {
   const dispatch = useDispatch();
   const AuthData = useSelector((state) => state.Auth.user);
+  console.log('🚀 ~ Dashboard ~ AuthData:', AuthData);
   const ProfileData = useSelector((state) => state.Profile);
   const { profile } = ProfileData;
 

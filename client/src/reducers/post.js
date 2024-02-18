@@ -23,6 +23,29 @@ const Post = createSlice({
         loading: false,
       };
     },
+    addComment: (state, action) => {
+      return {
+        ...state,
+        post: {
+          ...state.post,
+          comments: [...state.post.comments, action.payload],
+        },
+        loading: false,
+      };
+    },
+    deleteComment: (state, action) => {
+      return {
+        ...state,
+        post: {
+          ...state.post,
+          comments: state.post.comments.filter(
+            (comment) => comment._id !== action.payload
+          ),
+        },
+        loading: false,
+      };
+    },
+
     getAllPostsSuccess: (state, action) => {
       return { ...state, posts: action.payload, loading: false };
     },
@@ -59,11 +82,13 @@ export const {
   deletePostById,
   addPost,
   getAllPostsSuccess,
+  addComment,
+  deleteComment,
 } = Post.actions;
 
 export const getPost = (id) => async (dispatch) => {
   try {
-    const res = await axios.get(`/api/post${id}`);
+    const res = await axios.get(`/api/posts/${id}`);
     dispatch(getPostSuccess(res.data));
   } catch (error) {
     dispatch(
@@ -74,6 +99,7 @@ export const getPost = (id) => async (dispatch) => {
     );
   }
 };
+
 export const getAllPosts = () => async (dispatch) => {
   try {
     const res = await axios.get('/api/posts');
@@ -87,6 +113,7 @@ export const getAllPosts = () => async (dispatch) => {
     );
   }
 };
+
 export const likePost = (id) => async (dispatch) => {
   try {
     const res = await axios.put(`/api/posts/like/${id}`);
@@ -100,6 +127,7 @@ export const likePost = (id) => async (dispatch) => {
     );
   }
 };
+
 export const unlikePost = (id) => async (dispatch) => {
   try {
     const res = await axios.put(`/api/posts/unlike/${id}`);
@@ -113,6 +141,7 @@ export const unlikePost = (id) => async (dispatch) => {
     );
   }
 };
+
 export const deletePost = (id) => async (dispatch) => {
   try {
     await axios.delete(`/api/posts/${id}`);
@@ -127,6 +156,7 @@ export const deletePost = (id) => async (dispatch) => {
     );
   }
 };
+
 export const createPost = (formData) => async (dispatch) => {
   const config = {
     headers: {
@@ -145,6 +175,46 @@ export const createPost = (formData) => async (dispatch) => {
         dispatch(setAlertWithRemove({ msg: element.msg, alertType: 'danger' }));
       });
     }
+    dispatch(
+      getPostFail({
+        msg: error?.response?.statusText,
+        status: error?.response?.status,
+      })
+    );
+  }
+};
+
+export const addCommentPost = (postId, formData) => async (dispatch) => {
+  const config = {
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  };
+
+  try {
+    const res = await axios.post(
+      `/api/posts/comment/${postId}`,
+      formData,
+      config
+    );
+    dispatch(addComment(res.data));
+    dispatch(setAlertWithRemove('Comment Added Successfully', 'success'));
+  } catch (error) {
+    dispatch(
+      getPostFail({
+        msg: error?.response?.statusText,
+        status: error?.response?.status,
+      })
+    );
+  }
+};
+
+export const deleteCommentPost = (postId, commentId) => async (dispatch) => {
+  try {
+    await axios.delete(`/api/posts/comment/${postId}/${commentId}`);
+    dispatch(deleteComment(commentId));
+    dispatch(setAlertWithRemove('Comment Deleted Successfully', 'success'));
+  } catch (error) {
     dispatch(
       getPostFail({
         msg: error?.response?.statusText,

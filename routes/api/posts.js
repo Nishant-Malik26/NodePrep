@@ -45,6 +45,7 @@ router.get('/', auth, async (req, res) => {
 router.get('/:id', auth, async (req, res) => {
   try {
     const post = await Posts.findById(req.params.id);
+    console.log('🚀 ~ router.get ~ post:', post);
     if (!post) {
       return res.status(400).send('Post not found');
     }
@@ -127,7 +128,7 @@ router.post(
       });
       //   const newComment = new Posts({});
       const comment = await post.save();
-      res.json(comment);
+      res.status(200).json(comment);
     } catch (error) {
       console.log('🚀 ~ error:', error);
       return res.status(500).send(error);

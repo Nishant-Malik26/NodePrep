@@ -16,7 +16,6 @@ const Login = () => {
 
   const onSubmit = (e) => {
     e.preventDefault();
-    console.log(formData, 'formData');
     dispatch(login({ email, password }));
   };
 
@@ -57,7 +56,7 @@ const Login = () => {
         <input type='submit' value='Login' className='btn btn-primary' />
       </form>
       <p className='my-1'>
-        Don't have an account? <Link href='/register'>Sign Up</Link>
+        Don't have an account? <Link to='/register'>Sign Up</Link>
       </p>
     </>
   );
