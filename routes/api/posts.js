@@ -130,7 +130,6 @@ router.post(
       const comment = await post.save();
       res.status(200).json(comment);
     } catch (error) {
-      console.log('🚀 ~ error:', error);
       return res.status(500).send(error);
     }
   }
