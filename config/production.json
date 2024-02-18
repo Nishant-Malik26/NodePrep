@@ -1,0 +1,6 @@
+{
+    "mongoURL": "mongodb+srv://nishantmalik2015:qYRh1Om8mNf8G7ih@cluster0.0uzogt3.mongodb.net/",
+    "secretKey" : "itsasecret",
+    "gitClientId" : "e6517508e1b0b4d88237",
+    "gitSecterId" : "e6517508e1b0b4d88237"
+}
