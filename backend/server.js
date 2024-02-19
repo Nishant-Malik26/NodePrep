@@ -8,7 +8,7 @@ app.use(express.json({ extended: false }));
 
 // middleware
 const corsOptions = {
-  origin: 'https://client-devconnector-com.onrender.com',
+  origin: 'https://frontend-snowy-six.vercel.app',
 };
 app.use(express.json());
 app.use(cors(corsOptions));
