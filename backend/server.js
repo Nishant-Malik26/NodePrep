@@ -18,9 +18,10 @@ app.use('/api/users', require('./routes/api/users'));
 app.use('/api/auth', require('./routes/api/auth'));
 app.use('/api/posts', require('./routes/api/posts'));
 
-app.use(express.static(path.resolve(__dirname, '..', 'client', 'build')));
 app.get('*', (req, res) => {
-  res.sendFile(path.resolve(__dirname, '..', 'client', 'build', 'index.html'));
+  res.status(200).json({
+    message: 'bad request',
+  });
 });
 
 const PORT = process.env.PORT || 10000;
