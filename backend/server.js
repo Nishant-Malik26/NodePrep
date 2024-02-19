@@ -1,17 +1,12 @@
 const express = require('express');
 const connectDB = require('./config/db');
-const cors = require('cors');
 const path = require('path');
 const app = express();
 connectDB();
 app.use(express.json({ extended: false }));
 
-// middleware
-const corsOptions = {
-  origin: 'https://frontend-snowy-six.vercel.app',
-};
+
 app.use(express.json());
-app.use(cors(corsOptions));
 
 app.use('/api/profile', require('./routes/api/profile'));
 app.use('/api/users', require('./routes/api/users'));
