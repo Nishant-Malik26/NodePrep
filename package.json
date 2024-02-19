@@ -12,7 +12,8 @@
     "start-server": "node server.js",
     "install-client": "cd client && npm install",
     "build-client": "cd client && npm run build",
-    "start-client": "cd client && npm run start"
+    "start-client": "cd client && npm run start",
+    "vercel-build" : "npm install --prefix client && npm run build --prefix client"
   },
   "author": "",
   "license": "ISC",
