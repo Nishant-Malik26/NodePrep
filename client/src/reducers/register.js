@@ -78,7 +78,11 @@ export const register =
 
     const body = JSON.stringify({ name, email, password });
     try {
-      const res = await axios.post('api/users', body, config);
+      const res = await axios.post(
+        'https://node-prep.vercel.app/api/users',
+        body,
+        config
+      );
       dispatch(registerSuccess(res.data));
       dispatch(loadUser());
     } catch (error) {
