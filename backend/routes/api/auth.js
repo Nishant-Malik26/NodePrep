@@ -20,7 +20,7 @@ router.get('/', auth, async (req, res) => {
 });
 
 router.post(
-  'https://node-prep.vercel.app/',
+  '/',
   [
     // check("name", "Name is required").not().isEmpty(),
     check('email', 'Email is not in correct format').isEmail(),

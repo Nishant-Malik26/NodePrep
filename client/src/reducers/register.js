@@ -118,7 +118,11 @@ export const login =
 
     const body = JSON.stringify({ email, password });
     try {
-      const res = await axios.post('api/auth', body, config);
+      const res = await axios.post(
+        'https://node-prep.vercel.app/api/auth',
+        body,
+        config
+      );
       dispatch(loginSuccess(res.data));
       dispatch(loadUser());
     } catch (error) {
