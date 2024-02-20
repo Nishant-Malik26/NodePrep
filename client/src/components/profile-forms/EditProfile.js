@@ -7,6 +7,7 @@ const EditProfile = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const ProfileData = useSelector((state) => state.Profile);
+  console.log('🚀 ~ EditProfile ~ ProfileData:', ProfileData);
   const { profile } = ProfileData.profile;
   console.log('🚀 ~ EditProfile ~ profile:', profile);
   const { loading } = ProfileData;
