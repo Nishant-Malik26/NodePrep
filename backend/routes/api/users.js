@@ -1,18 +1,18 @@
-const express = require("express");
-const { check, validationResult } = require("express-validator");
-const gravatar = require("gravatar");
-const bcrypt = require("bcryptjs");
-const jwttoken = require("jsonwebtoken");
-const User = require("../../models/User");
-const config = require("config");
+const express = require('express');
+const { check, validationResult } = require('express-validator');
+const gravatar = require('gravatar');
+const bcrypt = require('bcryptjs');
+const jwttoken = require('jsonwebtoken');
+const User = require('../../models/User');
+const config = require('config');
 const router = express.Router();
 
 router.post(
-  "/",
+  '/',
   [
-    check("name", "Name is required").not().isEmpty(),
-    check("email", "Email is not in correct format").isEmail(),
-    check("password", "Password length should be greater than 6").isLength({
+    check('name', 'Name is required').not().isEmpty(),
+    check('email', 'Email is not in correct format').isEmail(),
+    check('password', 'Password length should be greater than 6').isLength({
       min: 6,
     }),
   ],
@@ -31,14 +31,14 @@ router.post(
       if (user) {
         return res
           .status(400)
-          .json({ errors: [{ msg: "User Already Exists" }] });
+          .json({ errors: [{ msg: 'User Already Exists' }] });
 
         // return new Error('User Already Exists')
       }
       const avatar = gravatar.url(email, {
-        s: "200",
-        r: "pg",
-        d: "mm",
+        s: '200',
+        r: 'pg',
+        d: 'mm',
       });
 
       user = new User({
@@ -58,7 +58,7 @@ router.post(
 
       jwttoken.sign(
         payload,
-        config.get("secretKey"),
+        'itsasecret',
         { expiresIn: 3600000 },
         (err, token) => {
           if (err) {
@@ -68,7 +68,7 @@ router.post(
       );
     } catch (err) {
       console.log(err);
-      res.status(500).send("Internal Server Error");
+      res.status(500).send('Internal Server Error');
     }
   }
 );
