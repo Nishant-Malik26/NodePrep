@@ -100,7 +100,7 @@ export const loadUser = () => async (dispatch) => {
     setAuthToken(localStorage.token);
   }
   try {
-    const res = await axios.get('/api/auth');
+    const res = await axios.get('https://node-prep.vercel.app/api/auth');
     dispatch(userLoaded(res.data));
   } catch (error) {
     dispatch(authError());

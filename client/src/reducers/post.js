@@ -88,7 +88,7 @@ export const {
 
 export const getPost = (id) => async (dispatch) => {
   try {
-    const res = await axios.get(`/api/posts/${id}`);
+    const res = await axios.get(`https://node-prep.vercel.app/api/posts/${id}`);
     dispatch(getPostSuccess(res.data));
   } catch (error) {
     dispatch(
@@ -102,7 +102,7 @@ export const getPost = (id) => async (dispatch) => {
 
 export const getAllPosts = () => async (dispatch) => {
   try {
-    const res = await axios.get('/api/posts');
+    const res = await axios.get('https://node-prep.vercel.app/api/posts');
     dispatch(getAllPostsSuccess(res.data));
   } catch (error) {
     dispatch(
@@ -116,7 +116,9 @@ export const getAllPosts = () => async (dispatch) => {
 
 export const likePost = (id) => async (dispatch) => {
   try {
-    const res = await axios.put(`/api/posts/like/${id}`);
+    const res = await axios.put(
+      `https://node-prep.vercel.app/api/posts/like/${id}`
+    );
     dispatch(updateLikes({ id, likes: res.data }));
   } catch (error) {
     dispatch(
@@ -130,7 +132,9 @@ export const likePost = (id) => async (dispatch) => {
 
 export const unlikePost = (id) => async (dispatch) => {
   try {
-    const res = await axios.put(`/api/posts/unlike/${id}`);
+    const res = await axios.put(
+      `https://node-prep.vercel.app/api/posts/unlike/${id}`
+    );
     dispatch(updateLikes({ id, likes: res.data }));
   } catch (error) {
     dispatch(
@@ -144,7 +148,7 @@ export const unlikePost = (id) => async (dispatch) => {
 
 export const deletePost = (id) => async (dispatch) => {
   try {
-    await axios.delete(`/api/posts/${id}`);
+    await axios.delete(`https://node-prep.vercel.app/api/posts/${id}`);
     console.log('🚀 ~ deletePost ~ id:', id);
     dispatch(deletePostById(id));
   } catch (error) {
@@ -165,7 +169,11 @@ export const createPost = (formData) => async (dispatch) => {
   };
 
   try {
-    const res = await axios.post('/api/posts', formData, config);
+    const res = await axios.post(
+      'https://node-prep.vercel.app/api/posts',
+      formData,
+      config
+    );
     dispatch(addPost(res.data));
     dispatch(setAlertWithRemove('Post Created Successfully', 'success'));
   } catch (error) {
@@ -193,7 +201,7 @@ export const addCommentPost = (postId, formData) => async (dispatch) => {
 
   try {
     const res = await axios.post(
-      `/api/posts/comment/${postId}`,
+      `https://node-prep.vercel.app/api/posts/comment/${postId}`,
       formData,
       config
     );
@@ -211,7 +219,9 @@ export const addCommentPost = (postId, formData) => async (dispatch) => {
 
 export const deleteCommentPost = (postId, commentId) => async (dispatch) => {
   try {
-    await axios.delete(`/api/posts/comment/${postId}/${commentId}`);
+    await axios.delete(
+      `https://node-prep.vercel.app/api/posts/comment/${postId}/${commentId}`
+    );
     dispatch(deleteComment(commentId));
     dispatch(setAlertWithRemove('Comment Deleted Successfully', 'success'));
   } catch (error) {
