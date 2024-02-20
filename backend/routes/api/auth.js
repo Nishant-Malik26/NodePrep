@@ -64,7 +64,7 @@ router.post(
 
         jwttoken.sign(
           payload,
-          config.get('secretKey'),
+          'itsasecret',
           { expiresIn: 3600000 },
           (err, token) => {
             if (err) {
